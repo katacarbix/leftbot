@@ -1,7 +1,6 @@
 import json
 import urllib
-
-API_KEY = 'AIzaSyDDPKNMshWjooLm1YLBUufIa-lSLKG06bY'
+from local_settings import GOOGLE_API_KEY
 
 channels_path = 'channels.txt'
 corpus_path = 'corpus.txt'
@@ -9,7 +8,7 @@ corpus = []
 
 with open(channels_path, 'r') as f:
 	for line in f:
-		data = json.loads(urllib.urlopen('https://www.googleapis.com/youtube/v3/search?key='+API_KEY+'&channelId='+(line.rstrip())+'&part=snippet&maxResults=50&order=date&safeSearch=none').read())
+		data = json.loads(urllib.urlopen('https://www.googleapis.com/youtube/v3/search?key='+GOOGLE_API_KEY+'&channelId='+(line.rstrip())+'&part=snippet&maxResults=50&order=date&safeSearch=none').read())
 		try:
 			for item in data['items']:
 				print item['snippet']['title']

@@ -12,6 +12,8 @@ MY_CONSUMER_SECRET = environ.get('TWITTER_CONSUMER_SECRET') #Your Consumer Secre
 MY_ACCESS_TOKEN_KEY = environ.get('TWITTER_ACCESS_TOKEN_KEY') #Your Twitter API Access Token Key set in Heroku config
 MY_ACCESS_TOKEN_SECRET = environ.get('TWITTER_ACCESS_SECRET') #Your Access Token Secret set in Heroku config
 
+GOOGLE_API_KEY = environ.get('GOOGLE_API_KEY') #Google/Youtube API key for scraping titles
+
 ODDS = environ.get('ORDER')  # How often do you want this to run? 1/8 times?
 ORDER = 1  # How closely do you want this to hew to sensical? 2 is low and 4 is high.
 

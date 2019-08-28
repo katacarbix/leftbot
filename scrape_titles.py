@@ -1,23 +1,29 @@
 import json
-import urllib
+import html
+from urllib.request import urlopen
 from local_settings import GOOGLE_API_KEY
 
-channels_path = 'channels.txt'
-corpus_path = 'corpus.txt'
-corpus = []
+channels_path = "data/channels.txt"
+corpus_path = "data/corpus.txt"
 
-with open(channels_path, 'r') as f:
-	for line in f:
-		data = json.loads(urllib.urlopen('https://www.googleapis.com/youtube/v3/search?key='+GOOGLE_API_KEY+'&channelId='+(line.rstrip())+'&part=snippet&maxResults=50&order=date&safeSearch=none').read())
-		try:
-			for item in data['items']:
-				print item['snippet']['title']
-				corpus.append(item['snippet']['title'])
-		except:
-			print data
+def format(text):
+	text = re.sub('\s+', ' ', text)  # collaspse consecutive whitespace to single spaces.
+	text = html.unescape(text)
+	text.lstrip().rstrip()
+	return text
 
-f.close()
+with open(channels_path, 'r') as f1:
+	with open(corpus_path, 'a') as f2:
+		for line in f1:
+			url = "https://www.googleapis.com/youtube/v3/search?key="+GOOGLE_API_KEY+"&channelId="+(line.lstrip().rstrip())+"&part=snippet&maxResults=50&order=date&safeSearch=none"
+			data = json.loads(urlopen(url).read())
+			try:
+				for item in data["items"]:
+					title = format(item["snippet"]["title"])
+					f2.write(title + "\n")
+			except:
+				print(data)
+				break
 
-of = open(corpus_path, 'w')
-of.write(str(corpus))
-of.close()
+f1.close()
+f2.close()

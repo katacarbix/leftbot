@@ -11,4 +11,4 @@ USERNAME = 'lefttube_ebooks'
 
 GOOGLE_API_KEY = environ.get('GOOGLE_API_KEY') # Google/Youtube API key for scraping titles
 
-ORDER = environ.get('ORDER') # How closely do you want this to hew to sensical? 2 is low and 4 is high.
+ORDER = 2 # How closely do you want this to hew to sensical? 2 is low and 4 is high.

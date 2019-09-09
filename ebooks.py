@@ -1,7 +1,7 @@
 import re
 import twitter
-import markovify
-import textdistance
+# import markovify
+from markov3 import *
 from local_settings import *
 
 def connect():
@@ -18,14 +18,11 @@ def tweet(body):
 	return None
 
 if __name__ == "__main__":
-	with open("data/corpus.txt") as f:
-		corpus = f.read().splitlines()
+	f = open("data/corpus.txt")
+	# model = markovify.Text(f, retain_original=False, state_size=ORDER)
+	model = Markov(f.read().splitlines())
 
-	model = markovify.Text(corpus, retain_original=False, state_size=ORDER)
-
-	status = None
-	while status == None or True in [textdistance.lcsstr.normalized_similarity(status, x) >= 0.6 for x in corpus]:
-		status = model.make_short_sentence(280)
+	status = model.make_short_sentence(280)
 
 	print(status)
 	tweet(status)

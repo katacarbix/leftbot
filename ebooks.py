@@ -1,8 +1,7 @@
 import re
 import twitter
-# import markovify
-from markov3 import *
-from local_settings import *
+from markov import Markov
+from settings import *
 
 def connect():
 	return twitter.Api(consumer_key=MY_CONSUMER_KEY,

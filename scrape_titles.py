@@ -1,29 +1,41 @@
 import json
 import html
-from urllib.request import urlopen
-from local_settings import GOOGLE_API_KEY
+import re
+import requests
+from settings import GITLAB_API_KEY
 
-channels_path = "data/channels.txt"
-corpus_path = "data/corpus.txt"
+corpus_file = "data/corpus.txt"
 
 def format(text):
-	text = re.sub('\s+', ' ', text)  # collaspse consecutive whitespace to single spaces.
-	text = html.unescape(text)
-	text.lstrip().rstrip()
-	return text
+	return re.sub('\s+', ' ', html.unescape(text)).lstrip().rstrip()
 
-with open(channels_path, 'r') as f1:
-	with open(corpus_path, 'a') as f2:
-		for line in f1:
-			url = "https://www.googleapis.com/youtube/v3/search?key="+GOOGLE_API_KEY+"&channelId="+(line.lstrip().rstrip())+"&part=snippet&maxResults=50&order=date&safeSearch=none"
-			data = json.loads(urlopen(url).read())
-			try:
-				for item in data["items"]:
-					title = format(item["snippet"]["title"])
-					f2.write(title + "\n")
-			except:
-				print(data)
-				break
+def main():
+	response = requests.get(
+		'https://gitlab.com/api/v4/projects/19386663/repository/files/data%2fvideos.json/raw',
+		params={
+			'ref': 'master',
+			'private_token': GITLAB_API_KEY
+		},
+		timeout=60
+	)
+	if response.status_code != requests.codes.ok:
+		print(f'Error retrieving video list (code {response.status_code})')
+		print(response.headers)
+		return
 
-f1.close()
-f2.close()
+	data = json.loads(response.text)
+
+	corpus = set()
+	with open(corpus_file) as f:
+		for line in f.readlines():
+			corpus.add(line.rstrip())
+
+	for video in data:
+		line = format(video['name'])
+		corpus.add(line)
+
+	with open(corpus_file, 'w') as f:
+		f.write('\n'.join(corpus))
+
+if __name__ == '__main__':
+	main()
